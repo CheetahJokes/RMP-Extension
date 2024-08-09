@@ -1,0 +1,12 @@
+{
+    "name": "RMP Extension",
+    "description": "This is an extension that allows for quick analysis of professors",
+    "version" : "1.0.0",
+    "manifest_version" : 3,
+    "action" : {
+        "default_popup": "popup.htlm",
+        "default_icon": {
+            "128": "RMP-icon.png"
+        }
+    }
+}
