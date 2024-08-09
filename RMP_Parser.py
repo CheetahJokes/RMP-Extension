@@ -40,10 +40,8 @@ class RMP_Parser():
                 file['Reviews:'][i]["Attendance:"] = ratings[i].attendance_mandatory
                 file['Reviews:'][i]["Comment:"] = ratings[i].comment
 
-                json_object = json.dumps(file, indent=4)
-                #with open(file['Name:'], 'w') as outfile:
-                    #outfile.write(json_object)
-                return json_object
+            json_object = json.dumps(file, indent=4)
+            return json_object
 
 
 def main():
