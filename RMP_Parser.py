@@ -1,6 +1,4 @@
 import ratemyprofessor
-import time
-import keyboard
 import json
 
 

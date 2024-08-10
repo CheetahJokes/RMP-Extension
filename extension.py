@@ -5,3 +5,4 @@ response = requests.get("https://student.msu.edu/psc/ps_9/EMPLOYEE/SA/c/SSR_STUD
 soup = BeautifulSoup(response.content, "html.parser")
 text = soup.get_text()
 print(text)
+
