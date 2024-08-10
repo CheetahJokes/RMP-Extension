@@ -45,8 +45,8 @@ class RMP_Parser():
 
 
 def main():
-    school = "University of Michigan" # pull from extension 
-    profs = ['David Lubensky'] # pull from extension
+    school = "Michigan State University" # pull from extension 
+    profs = ['Jonathan Choti'] # pull from extension
     rmp = RMP_Parser(school)
     json_string = rmp.parse_prof_ratings(profs)
     print(json_string)
