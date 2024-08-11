@@ -15,7 +15,7 @@ text_content = soup.get_text()
 #print(ner)
 #results = ner(text_content)
 
-nlp = spacy.load("en_core_web_sm")
+nlp = spacy.load("en_core_web_trf")
 
 doc = nlp(text_content)
 print(doc)
