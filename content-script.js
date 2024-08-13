@@ -1,14 +1,9 @@
-document.getElementById("myButton").addEventListener("click", async () => {
-    let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-
-    chrome.scripting.executeScript({
-        target: { tabId: tab.id },
-        function: getHTML
-    });
+document.addEventListener('click', function(event) {
+    // Check if the clicked element is a paragraph or any other element
+    if (event.target && event.target.nodeName === "P") {
+        // Get the text of the clicked element
+        const clickedText = event.target.innerText;
+        // Display an alert with the text
+        alert(`You clicked on: ${clickedText}`);
+    }
 });
-
-function getHTML() {
-    const html = document.documentElement.outerHTML;
-    console.log(html);  // Prints the HTML to the console
-    alert(html);
-}
