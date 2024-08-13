@@ -1,9 +1,19 @@
-document.addEventListener('click', function(event) {
-    // Check if the clicked element is a paragraph or any other element
-    if (event.target && event.target.nodeName === "P") {
-        // Get the text of the clicked element
-        const clickedText = event.target.innerText;
-        // Display an alert with the text
-        alert(`You clicked on: ${clickedText}`);
-    }
-});
+chrome.action.onClicked.addListener((tab) => {
+    chrome.scripting.executeScript({
+      target: {tabId: tab.id},
+      function: sendCopyTextMessage
+    });
+  });
+  
+  function sendCopyTextMessage() {
+    chrome.runtime.sendMessage({action: "copyText"}, (response) => {
+      if (chrome.runtime.lastError) {
+        console.error('Error sending message:', chrome.runtime.lastError);
+      } else if (response && response.success) {
+        console.log(`Copied to clipboard: "${response.text}"`);
+      } else {
+        console.error('Failed to copy text:', response.error);
+      }
+    });
+  }
+  
