@@ -85,16 +85,5 @@ doc = nlp(norm)
 names = [ent.text for ent in doc.ents if ent.label_ == "PERSON"]
 print("Names found:", names)
 
-'''
-def name_crunch(names):
-    j = ''
-    new_names = []
-    for text in range(len(names)):
-        if j != '' and not contains_space:
-            names[text-1] = names[text] + ' ' + j
-            index_remove.append(text-1)
-        if not contains_space:
-            j = text
-    pass
-'''
+
 

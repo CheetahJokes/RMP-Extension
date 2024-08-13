@@ -1,15 +1,20 @@
-import re
-from bs4 import BeautifulSoup
-#import spacy
+from flask import Flask, request, jsonify
 
+app = Flask(__name__)
 
-def split_camel_case(text):
-    """Splits camel case words in a string into separate words."""
-    # Use regex to find camel case patterns and insert a space before each uppercase letter (except the first one)
-    split_text = re.sub(r'(?<!^)(?=[A-Z])', ' ', text)
-    return split_text
+@app.route('/upload_html', methods=['POST'])
+def upload_html():
+    data = request.get_json()
+    html_content = data.get('html')
+    
+    # You can now process the HTML content in Python
+    print("Received HTML content:", html_content[:100])
 
-# Example usage
-sample_text = "ThisTextIsCamelCase and thisIsAnotherExample."
-split_text = split_camel_case(sample_text)
-print(split_text)
+    # Save the HTML content to a file, process it, etc.
+    with open("page.html", "w", encoding="utf-8") as f:
+        f.write(html_content)
+    
+    return jsonify({"status": "success", "message": "HTML received and processed."})
+
+if __name__ == '__main__':
+    app.run(debug=True)

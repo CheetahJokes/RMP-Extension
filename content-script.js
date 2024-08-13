@@ -1,7 +1,14 @@
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    if (message.action === 'getPageHtml') {
-        const pageHtml = document.documentElement.outerHTML;
-        // Send the HTML back to the background script
-        chrome.runtime.sendMessage({ action: 'pageHtml', html: pageHtml });
-    }
+document.getElementById("myButton").addEventListener("click", async () => {
+    let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+
+    chrome.scripting.executeScript({
+        target: { tabId: tab.id },
+        function: getHTML
+    });
 });
+
+function getHTML() {
+    const html = document.documentElement.outerHTML;
+    console.log(html);  // Prints the HTML to the console
+    alert(html);
+}

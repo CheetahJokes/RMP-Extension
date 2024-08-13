@@ -1,55 +1,17 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RMP Extension</title>
+    <title>My Extension</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: #f4f4f4;
-        }
-        .popup-container {
-            width: 300px;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            text-align: center;
-        }
-        h1 {
-            font-size: 18px;
-            color: #333;
-            margin-bottom: 20px;
-        }
-        .btn {
+        button {
             padding: 10px 20px;
-            font-size: 14px;
-            color: #fff;
-            background-color: #007bff;
-            border: none;
-            border-radius: 5px;
+            font-size: 16px;
             cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-        .btn:hover {
-            background-color: #0056b3;
         }
     </style>
 </head>
 <body>
-    <div class="popup-container">
-        <h1>Welcome to RMP Extension</h1>
-        <p>Click the button below to get the HTML of the current page.</p>
-        <button class="btn" id="getHtmlButton">Get Page HTML</button>
-    </div>
-    <script>
-        document.getElementById('getHtmlButton').addEventListener('click', function() {
-            // Send a message to the content script to get the page HTML
-            chrome.runtime.sendMessage({ action: 'getPageHtml' });
-        });
-    </script>
+    <button id="myButton">Click Me!</button>
+    <script src="content-script2.js"></script>
 </body>
 </html>
