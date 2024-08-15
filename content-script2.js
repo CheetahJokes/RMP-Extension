@@ -62,7 +62,7 @@ function createOverlay() {
     let dropdownCounter = 0;
     // Handle button click event to get the professor's name
     button.addEventListener('click', function() {
-        var selectedText = document.getSelection().toString().trim();
+        var selectedText = getUniversalSelection();
         if (selectedText) {
             // Create the dropdown element when the button is clicked
             var dropdown = document.createElement('div');
@@ -164,3 +164,32 @@ function createOverlay() {
 
 // Create or re-create the overlay when the script is explicitly injected
 createOverlay();
+
+function getUniversalSelection() {
+    let selection = document.getSelection().toString().trim();
+
+    if (!selection) {
+        // Check Shadow DOMs
+        const allShadowRoots = document.querySelectorAll('*');
+        allShadowRoots.forEach(element => {
+            if (element.shadowRoot) {
+                selection = element.shadowRoot.getSelection().toString().trim();
+                if (selection) return selection;
+            }
+        });
+
+        // Check within iframes
+        const iframes = document.querySelectorAll('iframe');
+        for (let i = 0; i < iframes.length; i++) {
+            try {
+                const iframeDoc = iframes[i].contentWindow.document;
+                selection = iframeDoc.getSelection().toString().trim();
+                if (selection) break;
+            } catch (e) {
+                console.log('Cannot access iframe due to cross-origin restrictions.');
+            }
+        }
+    }
+
+    return selection;
+}
