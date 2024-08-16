@@ -64,9 +64,24 @@ function createOverlay() {
     button.addEventListener('click', function() {
         var selectedText = getUniversalSelection();
         if (selectedText) {
+            fetch('http://127.0.0.1:5000/process', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ text: selectedText })
+            })
+            .then(response => response.json())
+            .then(data => {
+                const processedString = data.processed;
+               
+            
+          
+
+
             // Create the dropdown element when the button is clicked
             var dropdown = document.createElement('div');
-            dropdown.textContent = 'Professor';
+            dropdown.textContent = selectedText;
             dropdown.style.fontWeight = 'bold';
             dropdown.style.color = 'black';
             dropdown.style.position = 'absolute';
@@ -99,7 +114,7 @@ function createOverlay() {
             var dropdownContent = document.createElement('div');
             dropdownContent.style.display = 'none'; // Hidden initially
             dropdownContent.style.backgroundcolor = 'black';
-            dropdownContent.textContent = selectedText;
+            dropdownContent.textContent = processedString;
             dropdownContent.style.fontWeight = 'normal';
             dropdownContent.style.text = 'gray';
             dropdownContent.style.fontSize = '10px';
@@ -149,6 +164,8 @@ function createOverlay() {
                     });
                 }
             });
+        })
+        .catch(error => console.error('Error:', error));
 
             dropdownCounter++;
         } else {
