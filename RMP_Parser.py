@@ -2,9 +2,10 @@ import ratemyprofessor
 import json
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+import time
 
-app = Flask(__name__)
-CORS(app)
+'''app = Flask(__name__)
+CORS(app)'''
 
 class RMP_Parser:
     
@@ -45,7 +46,7 @@ class RMP_Parser:
         json_object = json.dumps(file, indent=4)
         return json_object
 
-@app.route('/process', methods=['POST'])
+'''@app.route('/process', methods=['POST'])
 def process_string():
     try:
         data = request.json
@@ -65,10 +66,13 @@ def process_string():
         return jsonify({"error": "Internal Server Error"}), 500
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True)'''
 
-'''def main():
+def main():
+    start = time.time()
     rmp = RMP_Parser("Michigan State University")
-    print(rmp.parse_prof_ratings("Jonathan Choti"))
+    print(rmp.parse_prof_ratings("Richard Enbody"))
+    print(time.time()-start)
 
-main()'''
+
+main()

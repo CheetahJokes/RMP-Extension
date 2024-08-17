@@ -1,11 +1,21 @@
 {
-  "manifest_version": 3,
-  "name": "React Test",
-  "description": "this is a react test",
-  "version": "1.0.0",
-  "action":{
-    "default_popup":"index.html",
-    "default_title": "Open"
-  },
-  "permissions":["scriptiing"]
+  "manifest_version":3,
+  "name":"Movable Overlay Extension",
+  "version":"1.0",
+  "description":"Creates a movable overlay on the page.",
+  "host_permissions" : ["<all_urls>"],
+    "action" : {
+        "default_popup": ""
+    },
+    "background":{
+        "service_worker": "background.js"
+      },
+  "permissions": [
+        "activeTab",
+        "scripting",
+        "storage",
+        "tabs",
+        "activeTab",
+        "notifications",
+        "webNavigation"]
 }

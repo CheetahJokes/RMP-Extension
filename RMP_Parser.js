@@ -121,7 +121,7 @@ async function getJSON(query) {
     const start = Date.now();
 
     schoolID = getSchoolID("Michigan State University");
-    await GetProfessorRating("Jonathan Choti", schoolID);
+    await GetProfessorRating("Richard Enbody", schoolID);
 
     const end = Date.now();
     console.log(`Execution time: ${end - start} ms`);
