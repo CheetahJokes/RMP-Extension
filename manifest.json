@@ -16,6 +16,12 @@
     "action" : {
         "default_popup": "index.html"
     },
+
+    "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"]
+    }],
     
     
     "icons": {"128": "rmp-icon.png"}

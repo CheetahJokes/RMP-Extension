@@ -1,9 +1,18 @@
-<div id="custom-popup" class="fixed top-0 left-0 w-full h-full flex items-center justify-center z-50">
-  <div class="bg-white p-4 rounded shadow-lg">
-    <h2 class="text-xl font-bold">Your Custom Popup</h2>
-    <p>This is a popup injected directly into the webpage.</p>
-    <div class="flex justify-center">
-       <button id="close-popup" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded">Close</button>
-    </div>
+<!DOCTYPE html>
+<html>
+<head>
+  <title>RMP Extension</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/daisyui@1.16.0/dist/full.css" rel="stylesheet">
+</head>
+<body class = "w-80 h-96 p-4 bg-white rounded overflow-hidden">
+  <div class = "bg-gray-500 p-4 rounded shadow-lg text-black w-70 h-10 flex items-center justify-center">
+    <h2 class="text-center text-lg font-bold text-white">Rate My Professor Extension</h2>
   </div>
-</div>
+  <div class = "flex items-center justify-center">
+    <button id="get-selection" class = "flex justify-center mt-4 px-4 py-2 bg-blue-500 text-white rounded">Get Selection</button>
+    <script src="popup.js"></script>
+  </div>
+  
+</body>
+</html>

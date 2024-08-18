@@ -1,36 +1,28 @@
 {
-  "manifest_version":3,
-  "name":"Movable Overlay Extension",
-  "version":"1.0",
-  "description":"Creates a movable overlay on the page.",
-  "host_permissions" : ["<all_urls>"],
-    "action" : {
-        "default_popup": ""
-    },
-    "background": {
-      "service_worker": "background.js"
-    },
-    
-
+  "manifest_version" : 3,
+  "name": "RMP Extension",
+  "description": "This is an extension that allows for quick analysis of professors",
+  "version" : "1.0.1",
   "permissions": [
-        "activeTab",
-        "scripting",
-        "storage",
-        "tabs",
-        "activeTab",
-        "notifications",
-        "webNavigation"],
+      "activeTab",
+      "scripting",
+      "storage",
+      "tabs",
+      "activeTab",
+      "notifications",
+      "webNavigation"
+      ],
+  "host_permissions" : ["<all_urls>"],
+  "action" : {
+      "default_popup": "popup.html"
+  },
+
   "content_scripts": [
-    {
-      "matches": ["<all_urls>"],
-      "js": ["contentscript.js"],
-      "css": ["styles.css"]
-    }],
-    "web_accessible_resources": [
-    {
-      "resources": ["popup-script.js"],
-      "matches": ["<all_urls>"]
-    }
-  ]
-        
+  {
+    "matches": ["<all_urls>"],
+    "js": ["content.js"]
+  }],
+  
+  
+  "icons": {"128": "rmp-icon.png"}
 }
