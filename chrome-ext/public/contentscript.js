@@ -1,62 +1,73 @@
-function createOverlay(){
-    const overlayHTML = `
-      <div id="my-overlay" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 hidden">
-        <div id="overlay-content" class="w-full max-w-lg p-6 bg-white rounded-lg shadow-lg">
-          <div class="flex justify-between items-center mb-4">
-            <h2 class="text-xl font-bold text-gray-800">Movable Overlay</h2>
-            <button class="btn btn-sm btn-circle btn-ghost" onclick="closeOverlay()">✕</button>
-          </div>
-          <div class="mb-6">
-            <p class="text-gray-600">This overlay can be moved around the page.</p>
-          </div>
-          <div class="mt-6 text-center">
-            <button class="btn btn-link text-gray-500" onclick="closeOverlay()">Cancel</button>
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  if (request.action === "showPopup") {
+    let iframe = document.getElementById("custom-popup-iframe");
+
+    if (!iframe) {
+      iframe = document.createElement("iframe");
+      iframe.id = "custom-popup-iframe";
+      iframe.style.position = "fixed";
+      iframe.style.top = "10px";
+      iframe.style.right = "10px";
+      iframe.style.width = "300px";
+      iframe.style.height = "200px";
+      iframe.style.border = "none";
+      iframe.style.zIndex = "10000";
+      iframe.style.backgroundColor = "transparent";
+      document.body.appendChild(iframe);
+
+      const doc = iframe.contentDocument || iframe.contentWindow.document;
+      doc.open();
+      doc.write(`
+        <div class="bg-white p-4 rounded shadow-lg text-black max-w-xs mx-auto">
+          <h2 class="text-xl font-bold text-black mb-4">Your Custom Popup</h2>
+          <p class="mb-4">This is a popup injected directly into the webpage.</p>
+          <div class="flex justify-center items-center">
+            <button id="close-popup" class="px-4 py-2 bg-blue-500 text-white rounded">Close</button>
           </div>
         </div>
-      </div>
-    `;
-  
-    const body = document.querySelector('body');
-    body.insertAdjacentHTML('beforeend', overlayHTML);
-  
-    const overlay = document.getElementById('my-overlay');
-    const content = document.getElementById('overlay-content');
-  
-    overlay.classList.remove('hidden');
-  
-    content.onmousedown = function(event) {
-      event.preventDefault();
-  
-      const shiftX = event.clientX - content.getBoundingClientRect().left;
-      const shiftY = event.clientY - content.getBoundingClientRect().top;
-  
-      function moveAt(pageX, pageY) {
-        content.style.left = pageX - shiftX + 'px';
-        content.style.top = pageY - shiftY + 'px';
-      }
-  
-      moveAt(event.pageX, event.pageY);
-  
-      function onMouseMove(event) {
-        moveAt(event.pageX, event.pageY);
-      }
-  
-      document.addEventListener('mousemove', onMouseMove);
-  
-      content.onmouseup = function() {
-        document.removeEventListener('mousemove', onMouseMove);
-        content.onmouseup = null;
-      };
-    };
-  
-    content.ondragstart = function() {
-      returnfalse;
-    };
-  }
-  
-  function closeOverlay() {
-    const overlay = document.getElementById('my-overlay');
-    if (overlay) {
-      overlay.remove();
+          <script src="${chrome.runtime.getURL('popup-script.js')}"></script>
+      `);
+      doc.close();
+    } else {
+      iframe.style.display = "block";
     }
   }
+});
+
+window.addEventListener("message", (event) => {
+  if (event.data.action === 'closePopup') {
+    let iframe = document.getElementById("custom-popup-iframe");
+    if (iframe) {
+      iframe.style.display = "none";
+    }
+  }
+});
+
+function getUniversalSelection() {
+  let selection = document.getSelection().toString().trim();
+
+  if (!selection) {
+      // Check Shadow DOMs
+      const allShadowRoots = document.querySelectorAll('*');
+      allShadowRoots.forEach(element => {
+          if (element.shadowRoot) {
+              selection = element.shadowRoot.getSelection().toString().trim();
+              if (selection) return selection;
+          }
+      });
+
+      // Check within iframes
+      const iframes = document.querySelectorAll('iframe');
+      for (let i = 0; i < iframes.length; i++) {
+          try {
+              const iframeDoc = iframes[i].contentWindow.document;
+              selection = iframeDoc.getSelection().toString().trim();
+              if (selection) break;
+          } catch (e) {
+              console.log('Cannot access iframe due to cross-origin restrictions.');
+          }
+      }
+  }
+
+  return selection;
+}
