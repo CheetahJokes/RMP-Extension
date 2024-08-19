@@ -2,17 +2,26 @@
 <html>
 <head>
   <title>RMP Extension</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/daisyui@1.16.0/dist/full.css" rel="stylesheet">
 </head>
-<body class = "w-80 h-96 p-4 bg-white rounded overflow-hidden">
-  <div class = "bg-gray-500 p-4 rounded shadow-lg text-black w-70 h-10 flex items-center justify-center">
-    <h2 class="text-center text-lg font-bold text-white">Rate My Professor Extension</h2>
-  </div>
-  <div class = "flex items-center justify-center">
-    <button id="get-selection" class = "flex justify-center mt-4 px-4 py-2 bg-blue-500 text-white rounded">Get Selection</button>
-    <script src="popup.js"></script>
-  </div>
+<body data-theme="dim" style="margin: 0; padding: 0; border:none">
+  <div style="width: 500px; height: 600px ; background-color: rgb(50, 50, 50); display: flex; flex-direction: column; justify-content: space-between; border:none">
   
+    <div class = "p-4 shadow-lg w-70 h-20 rounded-lg flex items-center justify-center" style = "background-color: rgb(64, 64, 64);">
+      <h2 class=" text-center text-2xl font-bold text-white">Rate My Professor Extension</h2>
+    </div>
+  
+    <div id="accordion-container" class="p-4 flex-1 overflow-auto">
+      
+    </div>
+
+
+    <div class = " p-4 flex items-center justify-center">
+      <button id="get-selection" class = "btn-block btn-primary flex justify-center mt-4 px-6 py-3 text-xl rounded font-bold">Rate Professor</button>
+      <script src="content.js"></script>
+    </div>
+  </div>
 </body>
 </html>

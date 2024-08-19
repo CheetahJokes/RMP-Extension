@@ -5,24 +5,19 @@ import './App.css';
 
 function App(){
   return(
-  <div class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-  <div class="w-full max-w-lg p-6 bg-white rounded-lg shadow-lg">
-    <div class="flex justify-between items-center mb-4">
-      <h2 class="text-xl font-bold text-gray-800">Extension Overlay</h2>
-      <button class="btn btn-sm btn-circle btn-ghost" onclick="closeOverlay()">✕</button>
+    <body style="margin: 0; padding: 0; border:none">
+    <div style="width: 500px; height: 600px;  display: flex; flex-direction: column; justify-content: space-between; border:none">
+    
+      <div class = "bg-gray-500 p-4 shadow-lg text-black w-70 h-20 flex items-center justify-center">
+        <h2 class=" text-center text-2xl font-bold text-white">Rate My Professor Extension</h2>
       </div>
-      <div class="mb-6">
-        <p class="text-gray-600">This is a simple Chrome extension overlay using Tailwind CSS and DaisyUI. You can add any content you need here.</p>
-        </div>
-        <div class="space-y-4">
-          <button class="btn btn-primary w-full">Primary Action</button>
-          <button class="btn btn-secondary w-full">Secondary Action</button>
-          </div>
-          <div class="mt-6 text-center">
-            <button class="btn btn-link text-gray-500" onclick="closeOverlay()">Cancel</button>
-            </div>
-            </div>
-            </div>
+    
+      <div class = " p-4 flex items-center justify-center">
+        <button id="get-selection" class = "btn-block flex justify-center mt-4 px-6 py-3 bg-green-800 text-white text-xl rounded">Get Selection</button>
+        <script src="popup.js"></script>
+      </div>
+    </div>
+  </body>
   );}
 
 

@@ -1,13 +1,35 @@
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+function handleMessage(request, sender, sendResponse) {
     if (request.action === 'getSelection') {
-      const selection = window.getUniversalSelection();
-      if (!selection){
-        alert("Please some text you silly silly man!");
-      }
-      sendResponse({ selection });
+      const selectedText = window.getUniversalSelection();
+      sendResponse({ selection: selectedText });
     }
-  });
-
+  }
+  
+  // Handle messages if running in content script context
+  if (window.location.href) {
+    chrome.runtime.onMessage.addListener(handleMessage);
+  }
+  
+  // Handle popup interactions
+  if (document.getElementById('get-selection')) {
+    document.getElementById('get-selection').addEventListener('click', () => {
+      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+        chrome.tabs.sendMessage(tabs[0].id, { action: 'getSelection' }, (response) => {
+          const selectedText = response.selection || 'No text selected';
+          const container = document.getElementById('accordion-container');
+          container.innerHTML = `
+            <div class="collapse collapse-arrow text-white" style = "background-color: rgb(64, 64, 64); width: 100%; max-width: 600px;">
+                <input type="checkbox" />
+                <div class="collapse-title text-xl font-medium px-6 py-4">Click to open this one and close others</div>
+                <div class="collapse-content">
+                    <p>${selectedText}</p>
+                </div>
+            </div>
+          `;
+        });
+      });
+    });
+  }
 
   function getUniversalSelection() {
     let selection = document.getSelection().toString().trim();
