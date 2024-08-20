@@ -13,23 +13,29 @@ function handleMessage(request, sender, sendResponse) {
   // Handle popup interactions
   if (document.getElementById('get-selection')) {
     document.getElementById('get-selection').addEventListener('click', () => {
-      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-        chrome.tabs.sendMessage(tabs[0].id, { action: 'getSelection' }, (response) => {
-          const selectedText = response.selection || 'No text selected';
+        chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+            chrome.tabs.sendMessage(tabs[0].id, { action: 'getSelection' }, (response) => {
+                const selectedText = response.selection || 'No text selected';
+                
+                // Send selected text to background script to reverse it
+                chrome.runtime.sendMessage({ action: 'reverseText', text: selectedText }, (response) => {
+                    const reversedText = response.reversedText;
+
           const container = document.getElementById('accordion-container');
           container.innerHTML = `
-            <div class="collapse collapse-arrow text-white" style = "background-color: rgb(64, 64, 64); width: 100%; max-width: 600px;">
+            <div class="collapse collapse-arrow rounded" style = "background-color:rgb(28, 33, 43); color: rgb(122, 193, 187); width: 100%; max-width: 600px;">
                 <input type="checkbox" />
                 <div class="collapse-title text-xl font-medium px-6 py-4">Click to open this one and close others</div>
                 <div class="collapse-content">
-                    <p>${selectedText}</p>
+                    <p>${reversedText}</p>
                 </div>
             </div>
           `;
+       });
+            });
         });
-      });
     });
-  }
+}
 
   function getUniversalSelection() {
     let selection = document.getSelection().toString().trim();

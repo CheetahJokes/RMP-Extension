@@ -2,7 +2,7 @@
 module.exports = {
   content: [
     "./src/**/*.{js,jsx,ts,tsx}", './dist/*.html','./popup.html',
-    './popup.js'
+    './content.js'
   ],
   theme: {
     extend: {},
@@ -11,6 +11,15 @@ module.exports = {
   daisyui: {
     themes: [
           "dim",
+          "autumn",
+          "dark",
+          "cupcake",
+          "retro",
+          "night",
+          {mytheme: {
+            "primary": "#1C212B",
+          },
+        }
         ],
       },
   };
