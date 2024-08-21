@@ -32,6 +32,7 @@ function GetProfessorRatingQuery(professorName, schoolID) {
               avgRatingRounded
               wouldTakeAgainPercentRounded
               department
+              numRatings
               ratings {
                 edges {
                   node {
