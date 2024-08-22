@@ -9,11 +9,28 @@
 <body style="margin: 0; padding: 0; border:none">
   <div style="width: 500px; height: 600px ; display: flex; flex-direction: column; justify-content: space-between; border:none">
   
-    <div class = "p-4 shadow-lg w-70 h-20 rounded-lg flex items-center justify-center">
-      <img src="grad_hat_clear.png" alt="Description" class="w-24 h-auto ml-5 mb-25">
-      <h2 style = "color: rgb(178, 204, 214);" class=" text-center text-2xl font-bold mr-5">Rate My Professor Extension</h2>
-      <button id="clear-accordion" class="btn-block flex justify-center mt-4 px-3 py-2 text-xl rounded font-bold" style="background-color: rgb(28, 33, 43); color: rgb(122, 193, 187);">Clear</button>
-    </div>
+    <div class="p-4 shadow-lg w-70 h-20 flex items-center justify-between border-b-4" style = "border-color: rgb(28, 33, 43) ;">
+      <div class="flex items-center w-full">
+          <img src="grad_hat.png" alt="Description" class="w-12 h-auto mr-2">
+          <h2 style="color: rgb(178, 204, 214);" class="text-3xl font-bold">RMP</h2>
+          <label id= "search-input" style = "border-color: rgb(178, 204, 214);" class="input input-bordered flex items-center justify-between w-full ml-2.5 gap-2">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 16 16"
+              fill="currentColor"
+              class="h-4 w-4 opacity-70">
+              <path
+                fill-rule="evenodd"
+                d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z"
+                clip-rule="evenodd" />
+            </svg>
+            <input style = "color: rgb(178, 204, 214);"type="text" class="w-full grow bg-transparent focus:border-custom-focus focus:outline-none" placeholder="Search School" />
+            <button id="select_school" class="px-1 py-1 text-xl rounded ml-2" style=" color: rgb(178, 204, 214); border-color:rgb(178, 204, 214) ;">Select</Select></button> 
+          </label>
+      </div>
+  </div>
+
+  
   
     <div id="accordion-container" class="p-4 flex-1 overflow-auto" style="background-color: rgb(61, 68, 81);">
       
@@ -21,9 +38,10 @@
 
 
     <div class = " p-4 flex items-center justify-center">
-      <button id="get-selection" class = "btn-block flex justify-center mt-4 px-6 py-3 text-xl rounded font-bold" style="background-color: rgb(28, 33, 43); color: rgb(122, 193, 187); ">Rate Professor</button>
-      <script src="content.js"></script>
+      <button id="get-selection" class = "btn-block flex justify-center mt-4 px-6 py-3 text-xl rounded font-bold mr-1" style="background-color: rgb(28, 33, 43); color: rgb(122, 193, 187); ">Rate Professor</button>
+      <button id="clear-accordion" class="mt-4 px-1 py-3 text-xl rounded font-bold ml-1" style="background-color: rgb(28, 33, 43); color: rgb(122, 193, 187);">Clear</button>
     </div>
+    <script src="content.js"></script>
   </div>
 </body>
 </html>

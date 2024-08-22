@@ -1,10 +1,12 @@
 function handleMessage(request, sender, sendResponse) {
     if (request.action === 'getSelection') {
       const selectedText = window.getUniversalSelection();
-      sendResponse({ selection: selectedText });
+      sendResponse({ selection: selectedText});
     }
   }
-  
+
+
+
   // Handle messages if running in content script context
   if (window.location.href) {
     chrome.runtime.onMessage.addListener(handleMessage);
@@ -18,8 +20,9 @@ function handleMessage(request, sender, sendResponse) {
           const selectedText = response.selection || 'No text selected';
   
           // Send selected text to background script to reverse it
-          chrome.runtime.sendMessage({ action: 'reverseText', text: selectedText }, (response) => {
+          chrome.runtime.sendMessage({ action: 'reverseText', professor: selectedText}, (response) => {
             const reversedText = response.reversedText;
+    
   
             // Load existing accordion data
             chrome.storage.local.get(['accordionData'], (result) => {
