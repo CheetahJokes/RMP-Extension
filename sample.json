@@ -1,0 +1,31 @@
+{
+    "Name:": "Jonathan Choti",
+    "School:": "Michigan State University",
+    "Department:": "Arts & Humanities",
+    "Overall Rating:": 5,
+    "Overall Difficulty:": 2,
+    "Reviews:": [
+        {
+            "Class:": "IAH211A",
+            "Year:": "2023",
+            "Rating:": 5,
+            "Difficulty:": 2,
+            "Grade:": "A+",
+            "Attendance:": true,
+            "Comment:": "Absolutely wonderful professor had him for AFR101 through AFR202, and he is great. Very understanding of absences and gives very easy homework. He is available to answer emails in minutes almost 24/7 and is very helpful. answers questions very in depth and is such a caring person overall. i'd give him 6/5 if I could.",
+            "Thumbs Up:": 0,
+            "Thumbs Down:": 0
+        },
+        {
+            "Class:": "IAH211A",
+            "Year:": "2023",
+            "Rating:": 5,
+            "Difficulty:": 2,
+            "Grade:": "A+",
+            "Attendance:": false,
+            "Comment:": "By far he is my favorite teacher in MSU. If it isn't on the test, it isn't on the slide. very nice\nAlso Between Youtube audiobooks and sparknotes I didn't spend a single extra penny for this class. If you have any emails, the professor will get back to you literally within minutes. Not to mention allowing assignment extensions if you contact him. \n",
+            "Thumbs Up:": 0,
+            "Thumbs Down:": 0
+        }
+    ]
+}

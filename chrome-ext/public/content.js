@@ -7,10 +7,30 @@ function handleMessage(request, sender, sendResponse) {
 
 
 
+// Attach an event listener to the button
+
+
+document.addEventListener('DOMContentLoaded', function() {
+  const selectSchoolButton = document.getElementById('select_school');
+  
+  if (selectSchoolButton) {
+      selectSchoolButton.addEventListener('click', function() {
+          console.log("Select School button clicked!");
+
+          const schoolInput = document.getElementById('search-input').value;
+          console.log("Inputted School Name:", schoolInput);
+
+          chrome.runtime.sendMessage({ action: 'schoolSelected', school: schoolInput });
+      });
+  } else {
+      console.error("Button not found!");
+  }
+});
   // Handle messages if running in content script context
   if (window.location.href) {
     chrome.runtime.onMessage.addListener(handleMessage);
   }
+
   
   // Handle popup interactions
   if (document.getElementById('get-selection')) {
