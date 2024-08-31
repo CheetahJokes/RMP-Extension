@@ -89,7 +89,7 @@ async function getJSON(query) {
   
       if (result.data && result.data.newSearch && result.data.newSearch.schools && result.data.newSearch.schools.edges.length > 0) {
         const schoolID = result.data.newSearch.schools.edges[0].node.id;
-        //console.log('School ID:', schoolID);
+        console.log('School ID:', schoolID);
         return schoolID;
       } else {
         console.log('No school found or no ID available.');
