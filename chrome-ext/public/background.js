@@ -1,5 +1,33 @@
+chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
+  if (request.action === 'getSearchResults'){
+    (async () => {
+      try {
+          // Await the result of the API call
+          
+          const school_data = await getSchoolInfo(request.textInput);
+          const school_names_and_id = []
 
+          school_data.forEach(schoolNode => {
+            const school = schoolNode.node;
 
+            // Create an object with all relevant information from each rating
+            const schoolInfo = {
+              id : school.id,
+              name : school.name,
+            };
+
+            school_names_and_id.push(schoolInfo)
+          })
+          console.log(school_names_and_id);
+
+          //sendResponse({school_names_and_id});
+      }
+      catch (error){
+        
+      }
+    })
+  }
+})
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.action === 'rate_professor') {
@@ -7,6 +35,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         (async () => {
             try {
                 // Await the result of the API call
+                
                 const professor_data = await GetProfessorRating(request.professor, 'U2Nob29sLTYwMQ==');
                 //console.log(JSON.stringify(professor_data, null, 2))
                 //console.log(professor_data.firstName);
@@ -21,8 +50,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
                 //const schoolName = professor_data.school.name;
                 const wouldTakeAgainPercentRounded = professor_data.wouldTakeAgainPercentRounded;
                 const fullName = professor_data.firstName + " " + professor_data.lastName;
-                
-            
+                                
                 // Access the ratings array
                 const ratingsArray = professor_data.ratings.edges;
                 
@@ -76,7 +104,7 @@ function getSchoolIDQuery(schoolName){
     const schoolQuery = 
     `{
     newSearch {
-        schools(query: {text:"${schoolName}"},first:1) {
+        schools(query: {text:"${schoolName}"},first:5) {
         edges{
             node{
                 id
@@ -160,15 +188,16 @@ async function getJSON(query) {
 };
 
 
-  async function getSchoolID(schoolName) {
+  async function getSchoolInfo(schoolName) {
     try { 
       const query = getSchoolIDQuery(schoolName);
       const result = await getJSON(query);
-  
+
       if (result.data && result.data.newSearch && result.data.newSearch.schools && result.data.newSearch.schools.edges.length > 0) {
-        const schoolID = result.data.newSearch.schools.edges[0].node.id;
+        const schoolInfo = result.data.newSearch.schools.edges;
+        console.log(JSON.stringify(schoolInfo));
+        return schoolInfo;
         //console.log('School ID:', schoolID);
-        return schoolID;
       } else {
         console.log('No school found or no ID available.');
       }
@@ -182,7 +211,6 @@ async function getJSON(query) {
   async function GetProfessorRating(professorName, schoolIDInput) {
     const schoolID = await schoolIDInput;
     console.log(`Fetching rating for Professor ${professorName} at ${schoolID}`);
-    
     try { 
       const query = GetProfessorRatingQuery(professorName, schoolID);
       //console.log(query)

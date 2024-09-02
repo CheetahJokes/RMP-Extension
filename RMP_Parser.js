@@ -2,7 +2,7 @@ function getSchoolIDQuery(schoolName){
     const schoolQuery = 
     `{
     newSearch {
-        schools(query: {text:"${schoolName}"},first:1) {
+        schools(query: {text:"${schoolName}"},first:5) {
         edges{
             node{
                 id
@@ -19,7 +19,7 @@ function GetProfessorRatingQuery(professorName, schoolID) {
     return `
     query {
       newSearch {
-        teachers(query: { text: "${professorName}", schoolID: "${schoolID}" }, first: 1) {
+        teachers(query: { text: "${professorName}", schoolID: "${schoolID}", fallback: true}) {
           edges {
             node {
               id
@@ -82,6 +82,25 @@ async function getJSON(query) {
 };
 
 
+async function getSchoolInfo(schoolName) {
+  try { 
+    const query = getSchoolIDQuery(schoolName);
+    const result = await getJSON(query);
+
+    if (result.data && result.data.newSearch && result.data.newSearch.schools && result.data.newSearch.schools.edges.length > 0) {
+      const schoolInfo = result.data.newSearch.schools.edges;
+      console.log(JSON.stringify(schoolInfo));
+      return schoolInfo;
+      //console.log('School ID:', schoolID);
+    } else {
+      console.log('No school found or no ID available.');
+    }
+  } catch (error) {
+    console.error('Error retrieving school ID:', error);
+  }
+};
+
+
   async function getSchoolID(schoolName) {
     try { 
       const query = getSchoolIDQuery(schoolName);
@@ -121,8 +140,9 @@ async function getJSON(query) {
   async function main(){
     const start = Date.now();
 
-    schoolID = getSchoolID("Michigan State University");
-    await GetProfessorRating("Richard Enbody", schoolID);
+    //schoolID = getSchoolID("Michigan State University");
+    schoolInfo = await getSchoolInfo("Michigan State");
+    //await GetProfessorRating("Adam Candeub", schoolID);
 
     const end = Date.now();
     console.log(`Execution time: ${end - start} ms`);
