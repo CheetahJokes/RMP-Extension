@@ -8,24 +8,27 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             try {
                 // Await the result of the API call
                 const professor_data = await GetProfessorRating(request.professor, 'U2Nob29sLTYwMQ==');
-                console.log(JSON.stringify(professor_data, null, 2))
+                //console.log(JSON.stringify(professor_data, null, 2))
                 //console.log(professor_data.firstName);
                 
                 // Accessing specific values
                 const avgDifficultyRounded = professor_data.avgDifficultyRounded;
                 const avgRatingRounded = professor_data.avgRatingRounded;
                 const department = professor_data.department;
+                const school = professor_data.school.name;
 
                 const numRatings = professor_data.numRatings;
                 //const schoolName = professor_data.school.name;
                 const wouldTakeAgainPercentRounded = professor_data.wouldTakeAgainPercentRounded;
                 const fullName = professor_data.firstName + " " + professor_data.lastName;
+                
             
                 // Access the ratings array
                 const ratingsArray = professor_data.ratings.edges;
-
+                
                 // Initialize an array to hold the extracted ratings information
                 const extractedRatings = [];
+                const tagsArray = [];
 
                 // Iterate through the ratings and extract relevant data
                 ratingsArray.forEach(ratingEdge => {
@@ -48,8 +51,17 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
                     extractedRatings.push(ratingInfo);
                 });
 
+                professor_data.teacherRatingTags.forEach(tag => {
+                  const inputTag = {
+                    tagName: tag.tagName,
+                    tagCount: tag.tagCount,
+                  }
+                  tagsArray.push(inputTag);
+                });
+                console.log(tagsArray);
+                //console.log(extractedRatings)
                 
-                sendResponse({fullName, department, avgDifficultyRounded, avgRatingRounded, wouldTakeAgainPercentRounded, numRatings, extractedRatings});
+                sendResponse({fullName, department, avgDifficultyRounded, avgRatingRounded, wouldTakeAgainPercentRounded, numRatings, extractedRatings, school, tagsArray});
             } catch (error) {
                 console.error('Error fetching professor data:', error);
                 sendResponse({ error: 'Failed to fetch professor data' });
@@ -95,6 +107,10 @@ function GetProfessorRatingQuery(professorName, schoolID) {
               wouldTakeAgainPercentRounded
               department
               numRatings
+              teacherRatingTags{
+                tagName
+                tagCount
+              }
               ratings {
                 edges {
                   node {

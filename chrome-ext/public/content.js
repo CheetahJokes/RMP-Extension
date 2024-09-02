@@ -63,6 +63,11 @@ function handleMessage(request, sender, sendResponse) {
                   num_stars.push("disabled");
                 }
               }
+              
+              //process for getting the best rating and sorting the tags by count
+              const maxRating = getMaxRating(response.extractedRatings)
+              const tags = response.tagsArray.sort((a, b) => b.tagCount - a.tagCount);
+
               //console.log("YOOOO " + response.numRatings);
               accordionData.push(
                 { prof_name: response.fullName, 
@@ -72,10 +77,13 @@ function handleMessage(request, sender, sendResponse) {
                   difficulty : response.avgDifficultyRounded, 
                   numRatings : response.numRatings,
                   TAP: response.wouldTakeAgainPercentRounded, 
-                  ratings : response.extractedRatings,
+                  all_ratings : response.extractedRatings,
+                  maxRating : maxRating,
+                  school : response.school,
+                  tags : tags,
                 },
               );
-
+              
               
               // Save updated accordion data
               chrome.storage.local.set({ accordionData: accordionData }, () => {
@@ -100,13 +108,20 @@ function handleMessage(request, sender, sendResponse) {
       });
     });
   }
-  
+
+  function capitalizeWords(str) {
+    return str.split(' ')
+              .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+              .join(' ');
+  }
+
   // Function to render the accordion
   function renderAccordion(accordionData) {
     const container = document.getElementById('accordion-container');
     container.innerHTML = ''; // Clear existing accordions
-  
+    
     accordionData.forEach(data =>{
+      const carouselHTML = renderCarousel(data['tags'], data['prof_name']);
       const newAccordion = `
         <div class="collapse collapse-arrow rounded mb-2" style="background-color: rgb(28, 33, 43); color: rgb(122, 193, 187); width: 100%; max-width: 600px;">
           <input type="checkbox" />
@@ -122,25 +137,46 @@ function handleMessage(request, sender, sendResponse) {
           <div class="collapse-content">
           
             <div class="flex flex-col items-center rounded text-center p-4" style="background-color: rgb(28, 33, 43);">
-              <p class="text-center mb-4 font-bold text-lg">${"Department: "+data['department']}</p>
+              <p style="color: rgb(178, 204, 214);" class="text-center font-bold text-lg">${data['school']}</p>
+              <p style="color: rgb(178, 204, 214);" class="text-center mb-2 font-bold text-lg">${data['department']}</p>
+              
 
 
-              <div class="stats shadow w-full">
+              <div class="stats shadow w-full mb-2">
                 <div class="stat place-items-center flex-1">
-                  <div class="stat-title text-xs">Number of Ratings</div>
-                  <div class="stat-value text-sm">${data['numRatings']}</div>
+                  <div style = "color: rgb(178, 204, 214);" class="stat-title text-xs">Take Again Percentage</div>
+                  <div class="stat-value text-sm text-white">${data['TAP'] + "%"}</div>
                 </div>
 
                 <div class="stat place-items-center flex-1">
-                  <div class="stat-title text-xs">Take Again Percentage</div>
-                  <div class="stat-value text-secondary text-sm">${data['TAP'] + "%"}</div>
-                </div>
-
-                <div class="stat place-items-center flex-1">
-                  <div class="stat-title text-xs">Average Difficulty</div>
-                  <div class="stat-value text-sm">${Math.round(data['difficulty'] * 10) / 10}</div>
+                  <div style = "color: rgb(178, 204, 214);" class="stat-title text-xs">Average Difficulty</div>
+                  <div class="stat-value text-sm text-white">${Math.round(data['difficulty'] * 10) / 10}/5</div>
                 </div>
               </div>
+
+
+              <div style="background-color: rgb(61, 68, 81);" class=" rounded-box carousel w-full mt-2 mb -2 h-16">
+              ${carouselHTML}
+              </div>
+    
+
+              <div style="background-color: rgb(61, 68, 81); padding: 15px; max-width: 500px;" class = "mt-4 rounded-box">
+                <div style="display: flex; align-items: center; justify-content: space-between;">
+                  <div style="display: flex;" >
+                    <strong style="font-size: 16px; color: rgb(178, 204, 214);">${data['maxRating']['class']}</strong>
+                  </div>
+                  <span style="font-size: 12px; color: rgb(178, 204, 214); opacity: 0.6; ">${data['maxRating']['date'].slice(0, 10)}</span>
+                </div>
+                <p class = "text-left" style="margin-top: 10px; font-size: 14px; color: rgb(178, 204, 214); line-height: 1.5;">${data['maxRating']['comment']}</p>
+                <div style="display: flex; align-items: center; margin-top: 10px; color: #666;">
+                  <span style="margin-right: 1px;"><i class="fa fa-thumbs-up"></i>&#128077</span>
+                  <span style="margin-right: 15px; opacity: 0.6; color: rgb(178, 204, 214); position: relative; top: 2px;"><i class="fa fa-thumbs-up"></i>${data['maxRating']['thumbsUpTotal']}</span>
+                  <span style="margin-right: 1px;"><i class="fa fa-thumbs-down"></i>&#128078</span>
+                  <span style="margin-right: 15px; opacity: 0.6; color: rgb(178, 204, 214); position: relative; top: 2px;"><i class="fa fa-thumbs-down"></i>${data['maxRating']['thumbsDownTotal']}</span>
+                  <span style="margin-right: 15px; opacity: 0.6; color: rgb(178, 204, 214); position: relative; top: 2px;"><i></i>Attendance: ${capitalizeWords(data['maxRating']['attendanceMandatory'])}</span>
+                </div>
+            </div>
+
             </div>
 
           </div>
@@ -149,6 +185,26 @@ function handleMessage(request, sender, sendResponse) {
       `;
       container.insertAdjacentHTML('beforeend', newAccordion);
     });
+  }
+
+  function renderCarouselElement(index, length, tag, name){
+    return`<div id="slide${index+1+name}" class="carousel-item relative w-full flex flex-col items-center">
+        <p style = "color: rgb(178, 204, 214);" class = "text-center text-lg mt-2">${tag['tagName']}</p>
+        <p style = "color: rgb(178, 204, 214); opacity: 0.6;" class = "text-center mb-2">${tag['tagCount'] + " People Agree"}</p>
+        <div class="absolute left-5 right-5 top-1/2 flex -translate-y-1/2 transform justify-between">
+        <a href="#slide${((index - 1) % length + 1)+name}" class="btn btn-circle">&#8592</a>
+        <a href="#slide${((index + 1) % length + 1)+name}" class="btn btn-circle">&#8594</a>
+      </div>
+    </div>
+    `
+  }
+  //tags is a list of dictionaries
+  function renderCarousel(tags,name){
+    html = "";
+    for(let i = 0; i < tags.length; i++){
+      html += renderCarouselElement(i,tags.length,tags[i], name);
+    }
+    return html
   }
   
   // Load accordion data on popup open
@@ -188,4 +244,21 @@ function handleMessage(request, sender, sendResponse) {
     }
 
     return selection;
+}
+
+function getMaxRating(ratings) {
+  if (ratings.length === 0) return null;
+  
+  max = ratings[0]['thumbsUpTotal'] - ratings[0]['thumbsDownTotal']
+  ans = ratings[0]
+
+  for(const rating of ratings){
+    current = rating['thumbsUpTotal'] - rating['thumbsDownTotal']
+    if(current > max){
+      ans = rating
+      max = current
+    }
+  }
+  
+  return ans
 }
