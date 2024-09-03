@@ -5,37 +5,67 @@ function handleMessage(request, sender, sendResponse) {
     }
   }
 
+   // Handle messages if running in content script context
 
-  document.addEventListener('DOMContentLoaded', function() {
+
+   document.addEventListener('DOMContentLoaded', () => {
+    const inputField = document.getElementById('search-input');
+    const dropdown = document.getElementById('dropdown');
+  
+    if (!inputField || !dropdown) {
+      console.error('Input field or dropdown element not found.');
+      return;
+    }
+  
+  inputField.addEventListener('input', async () => {
+    const query = inputField.value;
+    
+    // Clear previous results
+    dropdown.innerHTML = ''; 
+    if (query.length > 0) {
+      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+        chrome.runtime.sendMessage({ action: 'getSearchResults', textInput : query }, (response) => {
+            //search_results = response.school_names_and_id;
+          //console.log(search_results);
+        })})}})});
+            
+   
+  
+      if (window.location.href) {
+          chrome.runtime.onMessage.addListener(handleMessage);
+      }
+  
+ 
+   
+
+  //document.addEventListener('DOMContentLoaded', function() {
     // Get references to the input field and button
-    const searchInput = document.getElementById('search-input');
-    const selectButton = document.getElementById('select_school');
+    //const searchInput = document.getElementById('search-input');
+    //const selectButton = document.getElementById('select_school');
 
     // Add event listener to the button
-    selectButton.addEventListener('click', function() {
+    //selectButton.addEventListener('click', function() {
         // Get the value from the input field
-        const inputValue = searchInput.value.trim();
+        //const inputValue = searchInput.value.trim();
 
         // Save the input value (you can save it to local storage, send it to background script, etc.)
-        console.log('Selected School:', inputValue);
+        //console.log('Selected School:', inputValue);
 
         // Example: Save to local storage
-        chrome.storage.local.set({ selectedSchool: inputValue }, function() {
-            console.log('School name saved:', inputValue);
-        });
+        //chrome.storage.local.set({ selectedSchool: inputValue }, function() {
+           // console.log('School name saved:', inputValue);
+        //});
 
         // You can also close the popup if needed
         // window.close();
-    });
-  });
+    //});
+  //});
 
 // Attach an event listener to the button
 
 
-  // Handle messages if running in content script context
-  if (window.location.href) {
-    chrome.runtime.onMessage.addListener(handleMessage);
-  }
+ 
+  
 
   
   // Handle popup interactions
@@ -43,15 +73,28 @@ function handleMessage(request, sender, sendResponse) {
     document.getElementById('get-selection').addEventListener('click', () => {
       chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
         chrome.tabs.sendMessage(tabs[0].id, { action: 'getSelection' }, (response) => {
-          const selectedText = response.selection || 'No text selected';
-  
+          let selectedText = response.selection || 'No text selected';
+
+          function flipName(name) {
+            const [lastname, firstname] = name.split(', ').map(part => part.trim());
+            return `${firstname} ${lastname}`;
+          }
+                  
+          if (selectedText.includes(',')) {
+            selectedText = flipName(selectedText);
+          }
+          selectedText = capitalizeWords(selectedText);
+          console.log(selectedText);
+
+          
           // Send selected text to background script to reverse it
           chrome.runtime.sendMessage({ action: 'rate_professor', professor: selectedText}, (response) => {
           
   
             // Load existing accordion data
-            chrome.storage.local.get(['accordionData'], (result) => {
+            chrome.storage.local.get(['accordionData', 'professorNamesSet'], (result) => {
               accordionData = result.accordionData || [];
+              professorNamesSet = result.professorNamesSet || [];
   
               // Append new text to the data array
               num_stars = []
@@ -69,6 +112,19 @@ function handleMessage(request, sender, sendResponse) {
               const tags = response.tagsArray.sort((a, b) => b.tagCount - a.tagCount);
 
               //console.log("YOOOO " + response.numRatings);
+              if(professorNamesSet.includes(response.fullName)){
+                  console.log("ERROR: DUPLICATE PROF NAME");
+                  return;
+              }
+              if(response.fullName != selectedText){
+                console.log("TEACHER NOT FOUND ON RMP");
+                console.log(response.fullName + " " + selectedText);
+                return;
+              }
+              
+              professorNamesSet.push(response.fullName);
+              
+              console.log(professorNamesSet);
               accordionData.push(
                 { prof_name: response.fullName, 
                   num_stars: num_stars, 
@@ -86,7 +142,7 @@ function handleMessage(request, sender, sendResponse) {
               
               
               // Save updated accordion data
-              chrome.storage.local.set({ accordionData: accordionData }, () => {
+              chrome.storage.local.set({ accordionData: accordionData, professorNamesSet : professorNamesSet }, () => {
                 // Render the updated accordion
                 renderAccordion(accordionData);
               });
@@ -100,7 +156,7 @@ function handleMessage(request, sender, sendResponse) {
   if (document.getElementById('clear-accordion')) {
     document.getElementById('clear-accordion').addEventListener('click', () => {
       // Clear accordion data from storage
-      chrome.storage.local.remove('accordionData', () => {
+      chrome.storage.local.remove(['accordionData', 'professorNamesSet'], () => {
         const container = document.getElementById('accordion-container');
         if (container) {
           container.innerHTML = ''; // Clear all accordion collapses
