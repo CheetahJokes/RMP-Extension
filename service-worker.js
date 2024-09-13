@@ -16,3 +16,16 @@ chrome.webNavigation.onCompleted.addListener((details) => {
   // We do not inject content script here
   // because we want to avoid automatic injection in pop-ups
 }, { url: [{ hostContains: '' }] });
+
+
+
+
+
+
+
+
+
+
+
+
+

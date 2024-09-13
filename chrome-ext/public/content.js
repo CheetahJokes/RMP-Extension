@@ -21,13 +21,35 @@ function handleMessage(request, sender, sendResponse) {
     const query = inputField.value;
     
     // Clear previous results
-    dropdown.innerHTML = ''; 
+   dropdown.innerHTML = ''; 
     if (query.length > 0) {
       chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
         chrome.runtime.sendMessage({ action: 'getSearchResults', textInput : query }, (response) => {
-            //search_results = response.school_names_and_id;
+            console.log('Received response: YAYYYYY', response.school_names_and_id[0]);
+
+            if (chrome.runtime.lastError) {
+              console.error('Message sending error:', chrome.runtime.lastError);
+              return;
+            }
+          
+            if (!response) {
+              console.error('No response received from getSearchResults');
+              return;
+            }
+          
+            if (!response.school_names_and_id) {
+              console.error('school_names_and_id is missing from the response:', response);
+              return;
+            }
+          
+            let school_info = response.school_names_and_id;
+
+            if (school_info.length > 0) {
+              console.log(school_info[0]["id"], school_info[0]["name"]);}
+                //search_results = response.school_names_and_id;
           //console.log(search_results);
         })})}})});
+    
             
    
   
@@ -201,7 +223,7 @@ function handleMessage(request, sender, sendResponse) {
               <div class="stats shadow w-full mb-2">
                 <div class="stat place-items-center flex-1">
                   <div style = "color: rgb(178, 204, 214);" class="stat-title text-xs">Take Again Percentage</div>
-                  <div class="stat-value text-sm text-white">${data['TAP'] + "%"}</div>
+                  <div class="stat-value text-sm text-white">${Math.round(data['TAP'] * 10) / 10 + "%"}</div>
                 </div>
 
                 <div class="stat place-items-center flex-1">

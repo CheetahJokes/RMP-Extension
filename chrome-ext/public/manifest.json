@@ -10,7 +10,8 @@
       "tabs",
       "activeTab",
       "notifications",
-      "webNavigation"
+      "webNavigation",
+      "background"
       ],
   "host_permissions" : ["<all_urls>"],
   "action" : {
