@@ -1,33 +1,29 @@
 chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
-  if (request.action === 'getSearchResults'){
+  if (request.action === 'getSearchResults') {
+    setTimeout(() => {
     (async () => {
       try {
-          // Await the result of the API call
-          
-          const school_data = await getSchoolInfo(request.textInput);
-          const school_names_and_id = []
+                
+        const school_data = await getSchoolInfo(request.textInput);
+        const school_names_and_id = [];
 
-          school_data.forEach(schoolNode => {
-            const school = schoolNode.node;
+        school_data.forEach(schoolNode => {
+          const school = schoolNode.node;
+          school_names_and_id.push({ id: school.id, name: school.name });
+        });
 
-            // Create an object with all relevant information from each rating
-            const schoolInfo = {
-              id : school.id,
-              name : school.name,
-            };
-
-            school_names_and_id.push(schoolInfo)
-          })
-          console.log(school_names_and_id);
-
-          //sendResponse({school_names_and_id});
-      }
-      catch (error){
-        
-      }
-    })
+        console.log('Sending response:', school_names_and_id);
+        sendResponse({ school_names_and_id });
+      } catch (error) {
+        console.error('Error:', error);
+        sendResponse({ error: 'Failed to fetch school data' });
+      }},1000);
+    })();
+    return true; // Keep the message channel open
   }
-})
+});
+
+
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.action === 'rate_professor') {
@@ -195,7 +191,7 @@ async function getJSON(query) {
 
       if (result.data && result.data.newSearch && result.data.newSearch.schools && result.data.newSearch.schools.edges.length > 0) {
         const schoolInfo = result.data.newSearch.schools.edges;
-        console.log(JSON.stringify(schoolInfo));
+        //console.log(JSON.stringify(schoolInfo));
         return schoolInfo;
         //console.log('School ID:', schoolID);
       } else {
@@ -222,6 +218,7 @@ async function getJSON(query) {
     }
     catch (error) {
       console.error('Error retrieving school ID:', error);
+      throw new Error('Error retrieving school ID:', error)
     }
   };
   
