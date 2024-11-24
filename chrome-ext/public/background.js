@@ -1,25 +1,26 @@
-chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
+function wait(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === 'getSearchResults') {
-    setTimeout(() => {
     (async () => {
       try {
-                
-        const school_data = await getSchoolInfo(request.textInput);
-        const school_names_and_id = [];
+        const schoolData = await getSchoolInfo(request.textInput); // Assuming getSchoolInfo is defined elsewhere
+        const schoolNamesAndIds = schoolData.map(({ node }) => ({
+          id: node.id,
+          name: node.name,
+        }));
 
-        school_data.forEach(schoolNode => {
-          const school = schoolNode.node;
-          school_names_and_id.push({ id: school.id, name: school.name });
-        });
-
-        console.log('Sending response:', school_names_and_id);
-        sendResponse({ school_names_and_id });
+        console.log('Sending response:', schoolNamesAndIds);
+        sendResponse({ school_names_and_id: schoolNamesAndIds });
       } catch (error) {
-        console.error('Error:', error);
+        console.error('Error fetching school data:', error);
         sendResponse({ error: 'Failed to fetch school data' });
-      }},1000);
+      }
     })();
-    return true; // Keep the message channel open
+
+    return true; // Indicate the listener will send a response asynchronously
   }
 });
 

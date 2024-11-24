@@ -3,6 +3,7 @@ function handleMessage(request, sender, sendResponse) {
       const selectedText = window.getUniversalSelection();
       sendResponse({ selection: selectedText});
     }
+    return true;
   }
 
    // Handle messages if running in content script context
@@ -10,45 +11,101 @@ function handleMessage(request, sender, sendResponse) {
 
    document.addEventListener('DOMContentLoaded', () => {
     const inputField = document.getElementById('search-input');
-    const dropdown = document.getElementById('dropdown');
+    const dropdown = document.getElementById('here');
   
     if (!inputField || !dropdown) {
       console.error('Input field or dropdown element not found.');
       return;
     }
   
-  inputField.addEventListener('input', async () => {
-    const query = inputField.value;
-    
-    // Clear previous results
-   dropdown.innerHTML = ''; 
-    if (query.length > 0) {
-      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-        chrome.runtime.sendMessage({ action: 'getSearchResults', textInput : query }, (response) => {
-            console.log('Received response: YAYYYYY', response.school_names_and_id[0]);
+    // Debounce function to limit the rate of requests
+    const debounce = (func, delay) => {
+      let timeout;
+      return (...args) => {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func(...args), delay);
+      };
+    };
+  
+    // Update dropdown with results
+    const updateDropdown = (schoolInfo) => {
+      dropdown.innerHTML = ''; // Clear previous results
+      if (schoolInfo.length === 0) {
+        dropdown.innerHTML = '<li>No results found</li>';
+        return;
+      }
+  
+      schoolInfo.forEach(({ id, name }) => {
+        const listItem = document.createElement('li');
+        const anchor = document.createElement('a');
 
-            if (chrome.runtime.lastError) {
-              console.error('Message sending error:', chrome.runtime.lastError);
-              return;
-            }
-          
-            if (!response) {
-              console.error('No response received from getSearchResults');
-              return;
-            }
-          
-            if (!response.school_names_and_id) {
-              console.error('school_names_and_id is missing from the response:', response);
-              return;
-            }
-          
-            let school_info = response.school_names_and_id;
+// Set properties for the anchor element
+        anchor.textContent = `${name}`; // Set the text for the link
+        anchor.href = '#'; // Set the href (replace '#' with your URL or leave as-is for no navigation)
+        anchor.style.textDecoration = 'none'; // Optional: Remove underline from the link
+        anchor.style.color = 'inherit'; // Optional: Make the text color inherit from parent styles
+        anchor.style.cursor = 'pointer'; // Make the link clickable
 
-            if (school_info.length > 0) {
-              console.log(school_info[0]["id"], school_info[0]["name"]);}
-                //search_results = response.school_names_and_id;
-          //console.log(search_results);
-        })})}})});
+// Append the anchor to the list item
+        listItem.appendChild(anchor);
+
+// Add the list item to the dropdown
+        dropdown.appendChild(listItem);
+      });
+    };
+  
+    // Handle input changes with debounced requests
+    const handleInput = debounce(async () => {
+      const query = inputField.value.trim();
+  
+      // Clear dropdown if input is empty
+      if (query.length === 0) {
+        dropdown.innerHTML = '';
+        return;
+      }
+  
+      // Send message to background script
+     
+      chrome.runtime.sendMessage({ action: 'getSearchResults', textInput: query }, async (response) => {
+
+        console.log('Rahhhhhh', response.school_names_and_id)
+        if (chrome.runtime.lastError) {
+          console.error('Message sending error:', chrome.runtime.lastError);
+          return;
+        }
+  
+        if (!response || response.error) {
+          console.error('Error fetching data:', response?.error || 'No response received');
+          return;
+        }
+  
+        const { school_names_and_id: schoolInfo } = response;
+        updateDropdown(schoolInfo);
+      });
+    }, 300); // Adjust debounce delay as needed
+  
+    inputField.addEventListener('input', handleInput);
+  });
+
+
+  /////////////////////////////////////////////////
+
+  //async function sendMessageWithDelay(query) {
+    //chrome.runtime.sendMessage({ action: 'getSearchResults', textInput: query }, async (response) => {
+      //await wait(5000); // Wait for 5 seconds
+      //console.log('Rahhhhhh', response);
+      //if (chrome.runtime.lastError) {
+        //console.error('Message sending error:', chrome.runtime.lastError);
+        //return;
+      //}
+  
+      // Process the response
+    //});
+  //}
+  
+  //sendMessageWithDelay(query);
+
+  ///////////////////////////////////////////////////
     
             
    
