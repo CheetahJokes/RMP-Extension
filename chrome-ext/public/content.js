@@ -177,13 +177,25 @@ function handleMessage(request, sender, sendResponse) {
   
               // Append new text to the data array
               num_stars = []
+              
+              holding = response.avgRatingRounded- Math.floor(response.avgRatingRounded);
+              if (holding > 0.4){
+                  temportary_value = Math.ceil(response.avgRatingRounded)
+              }
+              else{
+                  temportary_value = Math.floor(response.avgRatingRounded)
+              }
+
               for (let i = 0; i < 5; i++){
-                if(i < response.avgRatingRounded){
+                
+                if(i < temportary_value){
                   num_stars.push("enabled");
                 }
                 else{
                   num_stars.push("disabled");
                 }
+                
+
               }
               
               //process for getting the best rating and sorting the tags by count
