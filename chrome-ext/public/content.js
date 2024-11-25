@@ -6,6 +6,27 @@ function handleMessage(request, sender, sendResponse) {
     return true;
   }
 
+  function showDropdown() {
+    const dropdown = document.getElementById('dropdown');
+    
+    // Remove the hidden classes
+    dropdown.classList.remove('opacity-0');
+    
+    // Add the visible classes
+    dropdown.classList.add('opacity-100');
+  }
+  
+  function hideDropdown() {
+    const dropdown = document.getElementById('dropdown');
+    
+    // Remove the visible classes
+    dropdown.classList.remove('opacity-100');
+    
+    // Add the hidden classes
+    dropdown.classList.add('opacity-0');
+  }
+  
+
    // Handle messages if running in content script context
 
 
@@ -28,8 +49,11 @@ function handleMessage(request, sender, sendResponse) {
     };
   
     // Update dropdown with results
+    
     const updateDropdown = (schoolInfo) => {
+      
       dropdown.innerHTML = ''; // Clear previous results
+
       if (schoolInfo.length === 0) {
         dropdown.innerHTML = '<li>No results found</li>';
         return;
@@ -38,6 +62,7 @@ function handleMessage(request, sender, sendResponse) {
       schoolInfo.forEach(({ id, name }) => {
         const listItem = document.createElement('li');
         const anchor = document.createElement('a');
+        showDropdown()
 
 // Set properties for the anchor element
         anchor.textContent = `${name}`; // Set the text for the link
@@ -57,10 +82,11 @@ function handleMessage(request, sender, sendResponse) {
     // Handle input changes with debounced requests
     const handleInput = debounce(async () => {
       const query = inputField.value.trim();
-  
+      
       // Clear dropdown if input is empty
       if (query.length === 0) {
         dropdown.innerHTML = '';
+        hideDropdown()
         return;
       }
   
@@ -82,7 +108,7 @@ function handleMessage(request, sender, sendResponse) {
         const { school_names_and_id: schoolInfo } = response;
         updateDropdown(schoolInfo);
       });
-    }, 300); // Adjust debounce delay as needed
+    }, 100); // Adjust debounce delay as needed
   
     inputField.addEventListener('input', handleInput);
   });
