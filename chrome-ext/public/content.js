@@ -1,3 +1,4 @@
+
 function handleMessage(request, sender, sendResponse) {
     if (request.action === 'getSelection') {
       const selectedText = window.getUniversalSelection();
@@ -14,6 +15,33 @@ function handleMessage(request, sender, sendResponse) {
     
     // Add the visible classes
     dropdown.classList.add('opacity-100');
+  }
+
+  function displayMessage(isError, message){
+    const alert = document.getElementById('alert');
+    // Set the text of the alert message
+    const alertMessage = alert.querySelector('span');
+    alertMessage.textContent = message;
+
+    // Change the background color directly
+    if (isError) {
+      alert.style.backgroundColor = "red"; // Error background color
+      alert.style.textAlign = "center"; 
+    } 
+    else {
+      alert.style.backgroundColor = "green"; // Success background color
+      alert.style.textAlign = "center"; 
+    }
+
+    // Add a visible class to make the alert visible
+    alert.classList.remove('opacity-0');
+    alert.classList.add('opacity-100');
+
+    // Hide the alert after 3 seconds
+    setTimeout(() => {
+        alert.classList.remove('opacity-100');
+        alert.classList.add('opacity-0');
+    }, 3000); 
   }
   
   function hideDropdown() {
@@ -71,6 +99,23 @@ function handleMessage(request, sender, sendResponse) {
         anchor.style.color = 'inherit'; // Optional: Make the text color inherit from parent styles
         anchor.style.cursor = 'pointer'; // Make the link clickable
 
+
+        anchor.addEventListener('click', () => {
+          selectedSchool = { id, name }; // Update global variable
+          console.log('Selected School:', selectedSchool);
+    
+          // Optionally save to storage
+          chrome.storage.local.set({ selectedSchool }, () => {
+            console.log('School saved to storage:', selectedSchool);
+          });
+    
+          // Hide dropdown after selection
+          dropdown.innerHTML = ''; // Clear previous results
+          inputField.value = '' //Clear Search
+          hideDropdown();
+          displayMessage(false, selectedSchool.name + " was selected")
+        });
+  
 // Append the anchor to the list item
         listItem.appendChild(anchor);
 
@@ -178,6 +223,25 @@ function handleMessage(request, sender, sendResponse) {
     document.getElementById('get-selection').addEventListener('click', () => {
       chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
         chrome.tabs.sendMessage(tabs[0].id, { action: 'getSelection' }, (response) => {
+            let schoolID = null;
+            let schoolName = null;
+
+            chrome.storage.local.get(['selectedSchool'], (result) => {
+              if (result.selectedSchool) {
+                  console.log('Retrieved School:', result.selectedSchool);
+                  // Access the school data
+                  const { id, name } = result.selectedSchool;
+                  console.log('School ID:', id);
+                  console.log('School Name:', name);
+                  schoolID = id
+                  schoolName = name;
+              } else {
+                  console.log('No school found in storage.');
+                  displayMessage(true, "'No school selected!'");
+                  return;
+                }
+          
+
           let selectedText = response.selection || 'No text selected';
 
           function flipName(name) {
@@ -191,11 +255,9 @@ function handleMessage(request, sender, sendResponse) {
           selectedText = capitalizeWords(selectedText);
           console.log(selectedText);
 
-          
           // Send selected text to background script to reverse it
-          chrome.runtime.sendMessage({ action: 'rate_professor', professor: selectedText}, (response) => {
+          chrome.runtime.sendMessage({ action: 'rate_professor', professor: selectedText, schoolId: schoolID}, (response) => {
           
-  
             // Load existing accordion data
             chrome.storage.local.get(['accordionData', 'professorNamesSet'], (result) => {
               accordionData = result.accordionData || [];
@@ -236,6 +298,7 @@ function handleMessage(request, sender, sendResponse) {
               if(response.fullName != selectedText){
                 console.log("TEACHER NOT FOUND ON RMP");
                 console.log(response.fullName + " " + selectedText);
+                displayMessage(true, selectedText + " not found on Rate my Professor for " + schoolName)
                 return;
               }
               
@@ -265,6 +328,7 @@ function handleMessage(request, sender, sendResponse) {
               });
             });
           });
+        });
         });
       });
     });
