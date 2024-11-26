@@ -5,7 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/daisyui@1.16.0/dist/full.css" rel="stylesheet">
+  <style>
+    #alert {
+    transition: opacity 0.5s ease-in-out; /* Smooth fade-in and fade-out */
+    text-align: center;
+    }
+  </style>
 </head>
+
 <body style="margin: 0; padding: 0; border:none">
   <div style="width: 500px; height: 600px ; display: flex; flex-direction: column; justify-content: space-between; border:none">
   
@@ -45,7 +52,10 @@
     </ul>
   </div>   -->
   
-  
+  <div id = "alert" role="alert" style = "width: 335px; margin-left:82.5px; margin-right:50px; display: flex; align-items: center; color: white; position: absolute; z-index: 9999;"class="alert alert-success opacity-0 mt-24">
+    <span style="text-align: center; width: 100%;"></span>
+  </div>
+
     <div id="accordion-container" class="p-4 flex-1 overflow-auto" style="background-color: rgb(61, 68, 81);">
       
     </div>

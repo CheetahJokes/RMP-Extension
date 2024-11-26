@@ -33,7 +33,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             try {
                 // Await the result of the API call
                 
-                const professor_data = await GetProfessorRating(request.professor, 'U2Nob29sLTYwMQ==');
+                const professor_data = await GetProfessorRating(request.professor, request.schoolId);
                 //console.log(JSON.stringify(professor_data, null, 2))
                 //console.log(professor_data.firstName);
                 
